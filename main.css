@@ -19,3 +19,18 @@
     background-color: #1463ad;
     
 }
+
+.col-xs-3, .col-sm-3, .col-md-3, .col-lg-3 {
+    background-color: none !important;
+}
+
+.col-xs-6, .col-sm-6, .col-md-6, .col-lg-6 {
+    border: solid #fff 2px;
+    background-color: dodgerblue;
+    color: white;
+    text-align: center;
+    height: 70px;
+   padding-top: 20px;
+    border-radius: 100px;
+}
+
