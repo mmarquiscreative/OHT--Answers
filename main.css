@@ -1,0 +1,21 @@
+.col-xs-4, .col-sm-4, .col-md-4, .col-lg-4 {
+    border: solid #fff 2px;
+    background-color: dodgerblue;
+    color: white;
+    text-align: center;
+    height: 70px;
+   padding-top: 20px;
+}
+
+
+.col-xs-4:hover, .col-sm-4:hover, .col-md-4:hover, .col-lg-4:hover {
+    font-size: 15px;
+    background-color: #68b6ff;
+    
+}
+
+.col-xs-4:active, .col-sm-4:active, .col-md-4:active, .col-lg-4:active {
+    font-size: 14px;
+    background-color: #1463ad;
+    
+}
