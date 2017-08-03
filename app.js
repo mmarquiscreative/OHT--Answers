@@ -109,8 +109,9 @@ function init(){
         
         
 });
-}
+} 
 
+//
 function askQuestion(){
     // next question
     
