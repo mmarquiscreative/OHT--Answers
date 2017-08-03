@@ -1,3 +1,13 @@
+var testResults ={
+    speech: {
+        totalRight: -1,
+        totalWrong: -1,
+        percentRight: -1,
+        percentWrong: -1
+    }
+}
+
+
 function nineOptTest(ans){
     function speechTest(){
 var curRound = 0;
@@ -16,7 +26,6 @@ var speechQuiz={
     }
 }
 
-console.log(speechQuiz.questions);
 function loadRandomOrder(){
     
     // 1. Calculate 9 groups of 3 numbers
@@ -34,14 +43,9 @@ function loadRandomOrder(){
             num3 = Math.round(Math.random()*8);
         }
         
-        console.log(num1 + ' ' + num2 + ' ' + num3);
-        
-        
         answer1 = speechQuiz.questions[num1];
         answer2 = speechQuiz.questions[num2];
         answer3 = speechQuiz.questions[num3];
-        
-        console.log('answer1 is: ' + answer1 + ' answer2 is: ' + answer2 + ' answer3 is: ' + answer3);
         
         speechQuiz.questionsOrder.push(answer1);
         speechQuiz.questionsOrder.push(answer2);
@@ -49,7 +53,6 @@ function loadRandomOrder(){
         
     }
 
-    console.log(speechQuiz.questionsOrder);
     // 2. Push numbers into questions array
 }
 
@@ -87,10 +90,10 @@ function howWell(){
         percentageWrong = Math.round((wrong / num) * 100);
         
      
-            speechQuiz.results.totalRight= right,
-            speechQuiz.results.totalWrong = wrong,
-            speechQuiz.results.percentRight = percentageRight,
-            speechQuiz.results.percentWrong = percentageWrong
+            testResults.speech.totalRight = right,
+            testResults.speech.totalWrong = wrong,
+            testResults.speech.percentRight = percentageRight,
+            testResults.speech.percentWrong = percentageWrong
         
 }
 
@@ -99,18 +102,16 @@ function init(){
     for (i = 0; i < 9; i++){
         cur = ans[i];
         tempNum = i + 1;
-        console.log(cur);
-        console.log(document.querySelector('#ans' + tempNum).id);
+        
     document.querySelector('#ans' + tempNum).id = cur;
     document.querySelector('#' + cur).innerHTML = '<p>' + cur + '</p>';
-         console.log(document.querySelector('#' + cur).id);
     }
    
     // 2. add event listener
     document.querySelector('.container-fluid').addEventListener('click', function(){
     
         // 1. add new answer obj
-        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound],event.target.id, Math.random()))
+        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound],event.target.parentNode.id, Math.random()));
         
         // 2. Log target
         console.log(speechQuiz.questionsOrder[curRound]);
@@ -138,7 +139,6 @@ function askQuestion(){
         tempNum++;
     var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
         tempNum++;
-        console.log(curRound+1);
     var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
     
     // load path string as new Audio object
@@ -157,7 +157,6 @@ function askQuestion(){
         audio3.play();
     }
     
-    console.log(roundNum);
     // update total question rounds
     roundNum++;
 
@@ -170,7 +169,7 @@ askQuestion();
 }
 document.querySelector('#toneAnswer').addEventListener('click', speechTest);
 }
-var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair']
+var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'];
 
-var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 nineOptTest(num);
