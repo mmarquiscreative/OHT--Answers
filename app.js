@@ -1,10 +1,11 @@
-function speechTest(){
+function nineOptTest(ans){
+    function speechTest(){
 var curRound = 0;
 var answerCounter = 0;
 var roundNum = 0;
 
 var speechQuiz={
-    questions: ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'],
+    questions: [ans[0], ans[1], ans[2], ans[3], ans[4], ans[5], ans[6], ans[7], ans[8]],
     questionsOrder: [],
     answers: [],
     results: {
@@ -14,6 +15,8 @@ var speechQuiz={
         percentWrong: undefined
     }
 }
+
+console.log(speechQuiz.questions);
 function loadRandomOrder(){
     
     // 1. Calculate 9 groups of 3 numbers
@@ -93,8 +96,16 @@ function howWell(){
 
 function init(){
     // 1. load speech test HTML
-    
-    
+    for (i = 0; i < 9; i++){
+        cur = ans[i];
+        tempNum = i + 1;
+        console.log(cur);
+        console.log(document.querySelector('#ans' + tempNum).id);
+    document.querySelector('#ans' + tempNum).id = cur;
+    document.querySelector('#' + cur).innerHTML = '<p>' + cur + '</p>';
+         console.log(document.querySelector('#' + cur).id);
+    }
+   
     // 2. add event listener
     document.querySelector('.container-fluid').addEventListener('click', function(){
     
@@ -120,12 +131,15 @@ function init(){
 //
 function askQuestion(){
     // next question
-    if (roundNum < 10){
-    
+    if (roundNum <= 9){
+    var tempNum = curRound;
     // audio pathway string
-    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound] + '.mp3';
-    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound+1] + '.mp3';
-    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound+2] + '.mp3';
+    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
+        tempNum++;
+    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
+        tempNum++;
+        console.log(curRound+1);
+    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
     
     // load path string as new Audio object
     var audio1 = new Audio(curAudio1);
@@ -155,3 +169,8 @@ init();
 askQuestion();
 }
 document.querySelector('#toneAnswer').addEventListener('click', speechTest);
+}
+var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair']
+
+var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+nineOptTest(num);
