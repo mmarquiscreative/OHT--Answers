@@ -1,5 +1,6 @@
 var speechQuiz={
     questions: ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'],
+    questionsOrder: ['bells'],
     answers: [],
     results: {
         totalRight: undefined,
@@ -8,7 +9,42 @@ var speechQuiz={
         percentWrong: undefined
     }
 }
+function loadRandomOrder(){
+    
+    // 1. Calculate 9 groups of 3 numbers
+    for (i = 0; i < 9; i++){
+        var num1, num2, num3, answer1, answer2, answer3;
+        
+        // 1.1 Calculate number in group of 3
+        num1 = Math.round(Math.random()*8);
+        num2 = Math.round(Math.random()*8);
+        num3 = Math.round(Math.random()*8);
+        
+        // 1.2 prevent duplicates in groups
+        if (num1 === num2 || num2 === num3){
+            num2 = Math.round(Math.random()*8);
+        } else if (num1 === num3) {
+            num3 = Math.round(Math.random()*8)
+        }
+        
+        console.log(num1 + ' ' + num2 + ' ' + num3);
+        
+        
+        answer1 = speechQuiz.questions[num1];
+        answer2 = speechQuiz.questions[num2];
+        answer3 = speechQuiz.questions[num3];
+        
+        console.log(answer1 + answer2 + answer3);
+        
+        speechQuiz.questionsOrder.push(answer1);
+        speechQuiz.questionsOrder.push(answer2);
+        speechQuiz.questionsOrder.push(answer3);
+        
+    }
 
+    console.log(speechQuiz.questionsOrder);
+    // 2. Push numbers into questions array
+}
 
 var curRound = -1;
 
@@ -57,7 +93,7 @@ function init(){
     document.querySelector('.container-fluid').addEventListener('click', function(){
     
         // 1. add new answer obj
-        speechQuiz.answers.push(new Answer(speechQuiz.questions[curRound],event.target.id, Math.random()))
+        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound],event.target.id, Math.random()))
         
         // 2. Log target
         console.log(event.target.id);
@@ -74,9 +110,18 @@ function askQuestion(){
     // next question
     curRound++;
     
+    // audio pathway string
+    var curAudio = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound] + '.mp3';
+    
+    // load path string as new Audio object
+    var audio = new Audio(curAudio);
+    
+    // play the audio
+    audio.play();
 
-        document.querySelector('#question').textContent = speechQuiz.questions[curRound];
+        document.querySelector('#question').textContent = speechQuiz.questionsOrder[curRound];
 
 }
 init();
 askQuestion();
+loadRandomOrder();
