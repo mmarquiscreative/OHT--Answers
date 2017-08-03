@@ -1,6 +1,11 @@
+function speechTest(){
+var curRound = 0;
+var answerCounter = 0;
+var roundNum = 0;
+
 var speechQuiz={
     questions: ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'],
-    questionsOrder: ['bells', 'cat', 'king', 'bells', 'cat', 'king'],
+    questionsOrder: [],
     answers: [],
     results: {
         totalRight: undefined,
@@ -45,8 +50,7 @@ function loadRandomOrder(){
     // 2. Push numbers into questions array
 }
 
-var curRound = 0;
-var answerCounter = 0;
+
 
 function Answer(question, id, volume){
     this.question = question;
@@ -88,8 +92,10 @@ function howWell(){
 }
 
 function init(){
+    // 1. load speech test HTML
     
-    //add event listener
+    
+    // 2. add event listener
     document.querySelector('.container-fluid').addEventListener('click', function(){
     
         // 1. add new answer obj
@@ -114,7 +120,7 @@ function init(){
 //
 function askQuestion(){
     // next question
-    
+    if (roundNum < 10){
     
     // audio pathway string
     var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound] + '.mp3';
@@ -136,8 +142,16 @@ function askQuestion(){
     audio2.onended = function(){
         audio3.play();
     }
+    
+    console.log(roundNum);
+    // update total question rounds
+    roundNum++;
 
+    
+    }
 }
+loadRandomOrder();
 init();
 askQuestion();
-loadRandomOrder();
+}
+document.querySelector('#toneAnswer').addEventListener('click', speechTest);
