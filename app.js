@@ -1,6 +1,6 @@
 var speechQuiz={
     questions: ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'],
-    questionsOrder: ['bells'],
+    questionsOrder: ['bells', 'cat', 'king', 'bells', 'cat', 'king'],
     answers: [],
     results: {
         totalRight: undefined,
@@ -21,10 +21,9 @@ function loadRandomOrder(){
         num3 = Math.round(Math.random()*8);
         
         // 1.2 prevent duplicates in groups
-        if (num1 === num2 || num2 === num3){
+        while (num1 === num2 || num2 === num3 || num1 === num3){
             num2 = Math.round(Math.random()*8);
-        } else if (num1 === num3) {
-            num3 = Math.round(Math.random()*8)
+            num3 = Math.round(Math.random()*8);
         }
         
         console.log(num1 + ' ' + num2 + ' ' + num3);
@@ -34,7 +33,7 @@ function loadRandomOrder(){
         answer2 = speechQuiz.questions[num2];
         answer3 = speechQuiz.questions[num3];
         
-        console.log(answer1 + answer2 + answer3);
+        console.log('answer1 is: ' + answer1 + ' answer2 is: ' + answer2 + ' answer3 is: ' + answer3);
         
         speechQuiz.questionsOrder.push(answer1);
         speechQuiz.questionsOrder.push(answer2);
@@ -46,7 +45,8 @@ function loadRandomOrder(){
     // 2. Push numbers into questions array
 }
 
-var curRound = -1;
+var curRound = 0;
+var answerCounter = 0;
 
 function Answer(question, id, volume){
     this.question = question;
@@ -96,11 +96,16 @@ function init(){
         speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound],event.target.id, Math.random()))
         
         // 2. Log target
+        console.log(speechQuiz.questionsOrder[curRound]);
         console.log(event.target.id);
         console.log(speechQuiz.answers[curRound].isCorrect);
+        answerCounter++;
+        curRound++;
         // 3. nextQuestion
-        
+        if (answerCounter == 3){
         askQuestion();
+        answerCounter = 0;
+        }
         
         
 });
@@ -108,18 +113,28 @@ function init(){
 
 function askQuestion(){
     // next question
-    curRound++;
+    
     
     // audio pathway string
-    var curAudio = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound] + '.mp3';
+    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound] + '.mp3';
+    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound+1] + '.mp3';
+    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[curRound+2] + '.mp3';
     
     // load path string as new Audio object
-    var audio = new Audio(curAudio);
+    var audio1 = new Audio(curAudio1);
+    var audio2 = new Audio(curAudio2);
+    var audio3 = new Audio(curAudio3);
     
-    // play the audio
-    audio.play();
-
-        document.querySelector('#question').textContent = speechQuiz.questionsOrder[curRound];
+    // play the 3 audio clips
+    audio1.play();
+    
+    audio1.onended = function(){
+        audio2.play();
+    }
+    
+    audio2.onended = function(){
+        audio3.play();
+    }
 
 }
 init();
