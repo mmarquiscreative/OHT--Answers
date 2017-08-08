@@ -34,3 +34,13 @@
     border-radius: 100px;
 }
 
+
+#box1, #box2, #box3 {
+    border: solid 2px dodgerblue;
+    height: 30px;
+    margin-top: 20px;
+}
+
+.filled{
+    background-color: dodgerblue;
+}

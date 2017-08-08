@@ -52,17 +52,18 @@ function loadRandomOrder(){
         speechQuiz.questionsOrder.push(answer3);
         
     }
-
+console.log(speechQuiz.questionsOrder);
+    console.log(speechQuiz.questions);
     // 2. Push numbers into questions array
 }
 
 
 
-function Answer(question, id, volume){
+function Answer(question, id, parentId, volume){
     this.question = question;
     this.id=id;
     this.volume=volume;
-    this.isCorrect = (question === id);
+    this.isCorrect = (question === id || question === parentId);
 }
 
 function howWell(){
@@ -111,19 +112,36 @@ function init(){
     document.querySelector('.container-fluid').addEventListener('click', function(){
     
         // 1. add new answer obj
-        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound],event.target.parentNode.id, Math.random()));
+        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound], event.target.id, event.target.parentNode.id, Math.random()));
         
         // 2. Log target
+        console.log(curRound);
         console.log(speechQuiz.questionsOrder[curRound]);
         console.log(event.target.id);
         console.log(speechQuiz.answers[curRound].isCorrect);
         answerCounter++;
         curRound++;
+        
+        // 4. Update Answer Progress
+        if (answerCounter < 4){
+            document.querySelector('#box' + (answerCounter)).classList.add('filled');
+        }
+        
         // 3. nextQuestion
         if (answerCounter == 3){
-        askQuestion();
+        setTimeout(function(){
+askQuestion();
         answerCounter = 0;
+            for (i = 0; i < 3; i++){
+                var tempNode = document.querySelectorAll('.filled');
+                tempNode.forEach(function(cur){
+                    cur.classList.remove('filled');
+                })
+            }
+        }, 600)
         }
+        
+        
         
         
 });
@@ -132,7 +150,7 @@ function init(){
 //
 function askQuestion(){
     // next question
-    if (roundNum <= 9){
+    if (roundNum <= 3){
     var tempNum = curRound;
     // audio pathway string
     var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
