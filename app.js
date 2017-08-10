@@ -7,12 +7,15 @@ var testResults ={
     }
 }
 
+var counters = {
+    curRound: 0,
+    answerCounter: 0,
+    roundNum: 0,
+    volumeCounter: 0.2
+}
 
 function nineOptTest(ans){
     function speechTest(){
-var curRound = 0;
-var answerCounter = 0;
-var roundNum = 0;
 
 var speechQuiz={
     questions: [ans[0], ans[1], ans[2], ans[3], ans[4], ans[5], ans[6], ans[7], ans[8]],
@@ -115,29 +118,34 @@ function updateAnsHTML(){
 
 function addNewAnswer(){
 // 1. add new answer obj
-        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[curRound], event.target.id, event.target.parentNode.id, Math.random()));
+        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[counters.curRound], event.target.id, event.target.parentNode.id, Math.random()));
 };
         
 function logTarget(){// 2. Log target
-        console.log(curRound);
-        console.log(speechQuiz.questionsOrder[curRound]);
+        console.log(counters.curRound);
+        console.log(speechQuiz.questionsOrder[counters.curRound]);
         console.log(event.target.id);
-        console.log(speechQuiz.answers[curRound].isCorrect);
-        answerCounter++;
-        curRound++;
+        console.log(speechQuiz.answers[counters.curRound].isCorrect);
+        counters.answerCounter++;
+        counters.curRound++;
 };
 
-function updateRoundProg(){        // 4. Update Answer Progress
-        if (answerCounter < 4){
-            document.querySelector('#box' + (answerCounter)).classList.add('filled');
+function updateRoundProg(){        
+    
+    // 4. Update Answer Progress
+        if (counters.answerCounter < 4){
+            document.querySelector('#box' + (counters.answerCounter)).classList.add('filled');
         }
 };
        
-function loadNextQuestion(){        // 3. nextQuestion
-        if (answerCounter == 3){
+function loadNextQuestion(){        
+    // 3. nextQuestion
+        if (counters.answerCounter === 3){
         setTimeout(function(){
-askQuestion();
-        answerCounter = 0;
+            askQuestion();
+            counters.answerCounter = 0;
+            counters.volumeCounter += .2;
+            
             for (i = 0; i < 3; i++){
                 var tempNode = document.querySelectorAll('.filled');
                 tempNode.forEach(function(cur){
@@ -147,7 +155,89 @@ askQuestion();
         }, 600)
         }
 };
+        
+// audio pathway string
+function audioString(someNum){
+    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
+    someNum++;
+        
+    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
+    someNum++;
+        
+    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
+    
+    // return audio strings as object
+    return {
+        curAudio1: curAudio1,
+        curAudio2: curAudio2,
+        curAudio3: curAudio3
+    };
+};
+
+// play the 3 audio files
+function playAudio(aud1, aud2, aud3){
+    aud1.play();
+    aud1.onended = function(){
+        aud2.play();
+        };
+    aud2.onended = function(){
+        aud3.play();
+        };
+};    
   
+        
+function audioCheck(){
+    // 1. check to see if 
+}
+function audioLoop(){
+    var backgroundAud;
+    
+    backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
+    
+    
+    
+    if (counters.roundNum === 1){    
+        backgroundAud.play();
+    }
+    
+    backgroundAud.onended = function(){
+        console.log('VolumeCounter: ' + counters.volumeCounter);
+        if(counters.volumeCounter < 4){
+            backgroundAud.play();
+            
+        } else {
+            backgroundAud.currentTime = 0;
+            counters.volumeCounter = 0;
+            };
+    
+    };
+    counters.volumeCounter += 0.2;
+    backgroundAud.volume = counters.volumeCounter;
+};
+
+        
+function playRoundAudio(){
+     console.log('round num is ' + counters.roundNum);    
+        var tempNum = counters.curRound;
+        
+        // 1. create audio pathway strings
+        var question = audioString(tempNum);    
+        
+        // 2. load path string as new Audio object
+        var audio1 = new Audio(question.curAudio1);
+            audio1.volume = (1 - counters.roundNum * .05);
+        var audio2 = new Audio(question.curAudio2);
+            audio2.volume = (1 - counters.roundNum * .05);
+        var audio3 = new Audio(question.curAudio3);
+            audio3.volume = (1 - counters.roundNum * .05);
+   
+        // 3. play the 3 audio clips
+        playAudio(audio1, audio2, audio3);
+    
+        // 4. update total question rounds
+        counters.roundNum++;
+}
+        
 function answerInput(){
     
     // 1. Add new answer obj
@@ -161,7 +251,7 @@ function answerInput(){
     
     // 4. Load next question
     loadNextQuestion();
-} 
+}; 
         
 function init(){
     // 1. load speech test HTML
@@ -171,72 +261,32 @@ function init(){
    
     // 2. add event listeners
     document.querySelector('.container-fluid').addEventListener('click', answerInput);
-} 
+};
+    document.querySelector('.container-fluid').addEventListener('click', audioCheck);
 
 //
 function askQuestion(){
    
-    /*
-    var conversation = 'Audio/BackgroundNoise.mp3';
-    var backgroundAud = new Audio(conversation);
-    backgroundAud.play();
-    backgroundAud.onended = function(){
-        backgroundAud.play();
-    }
-    backgroundAud.volume = (roundNum * .2 + .2);
+    // Limit number of rounds
+    if (counters.roundNum < 4){
+       playRoundAudio();
+    };
     
-    } else */
-    // next question
-    if (roundNum < 4){
-        console.log('round num is ' + roundNum);
-    var tempNum = curRound;
-    // audio pathway string
-    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
-        tempNum++;
-    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
-        tempNum++;
-    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[tempNum] + '.mp3';
-    
-    // load path string as new Audio object
-    
-        
-    var audio1 = new Audio(curAudio1);
-        audio1.volume = (1 - roundNum * .05);
-    var audio2 = new Audio(curAudio2);
-        audio2.volume = (1 - roundNum * .05);
-    var audio3 = new Audio(curAudio3);
-        audio3.volume = (1 - roundNum * .05);
-        
-   
-    // play the 3 audio clips
-    audio1.play();
-    
-    audio1.onended = function(){
-        audio2.play();
-    }
-    
-    audio2.onended = function(){
-        audio3.play();
-    }
-    
-    // update total question rounds
-    roundNum++;
+    // start bg noise
+    audioLoop();
+    console.log('audioloop begun');
 
-    }
-    
-    if (roundNum > 3){
-        console.log('trying to pause')
-        backgroundAud.loop = false;
-        backgroundAud.pause();
-        backgroundAud.currentTime = 0;
-    }
-}
+};
+        
 loadRandomOrder();
 init();
 askQuestion();
-}
+};
+
+
 document.querySelector('#toneAnswer').addEventListener('click', speechTest);
-}
+
+};
 var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'];
 
 var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
