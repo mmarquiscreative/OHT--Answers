@@ -11,7 +11,7 @@ var counters = {
     curRound: 0,
     answerCounter: 0,
     roundNum: 0,
-    volumeCounter: 0.2
+    volumeCounter: 0
 }
 
 function nineOptTest(ans){
@@ -28,7 +28,9 @@ var speechQuiz={
         percentWrong: undefined
     }
 }
-
+var backgroundAud;
+backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
+        
 function loadRandomOrder(){
     
     // Calculate 9 groups of 3 numbers
@@ -144,7 +146,6 @@ function loadNextQuestion(){
         setTimeout(function(){
             askQuestion();
             counters.answerCounter = 0;
-            counters.volumeCounter += .2;
             
             for (i = 0; i < 3; i++){
                 var tempNode = document.querySelectorAll('.filled');
@@ -186,35 +187,22 @@ function playAudio(aud1, aud2, aud3){
 };    
   
         
-function audioCheck(){
-    // 1. check to see if 
-}
 function audioLoop(){
-    var backgroundAud;
-    
-    backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
-    
-    
-    
-    if (counters.roundNum === 1){    
-        backgroundAud.play();
-    }
-    
-    backgroundAud.onended = function(){
-        console.log('VolumeCounter: ' + counters.volumeCounter);
-        if(counters.volumeCounter < 4){
-            backgroundAud.play();
-            
-        } else {
-            backgroundAud.currentTime = 0;
-            counters.volumeCounter = 0;
-            };
-    
-    };
-    counters.volumeCounter += 0.2;
+    backgroundAud.play();
+    backgroundAud.loop = true;
     backgroundAud.volume = counters.volumeCounter;
-};
+}
+        
+function pauseAudio(){
+    backgroundAud.pause();
+}
 
+function updateVolume(){
+    if(counters.volumeCounter <= .8){
+                counters.volumeCounter += .2;
+                backgroundAud.volume = counters.volumeCounter;
+            }
+}
         
 function playRoundAudio(){
      console.log('round num is ' + counters.roundNum);    
@@ -261,8 +249,9 @@ function init(){
    
     // 2. add event listeners
     document.querySelector('.container-fluid').addEventListener('click', answerInput);
+    
+    audioLoop();
 };
-    document.querySelector('.container-fluid').addEventListener('click', audioCheck);
 
 //
 function askQuestion(){
@@ -270,11 +259,10 @@ function askQuestion(){
     // Limit number of rounds
     if (counters.roundNum < 4){
        playRoundAudio();
+        updateVolume();
+    } else {
+        pauseAudio();
     };
-    
-    // start bg noise
-    audioLoop();
-    console.log('audioloop begun');
 
 };
         
