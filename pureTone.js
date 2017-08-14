@@ -11,6 +11,7 @@ function PureTone(fileName){
     this.fileName = fileName;
     this.audio = new Audio('Audio/' + fileName + '.wav');
     this.volume = 0;
+    this.score;
 }
 
 function ToneResult(toneName, volume){
@@ -38,7 +39,12 @@ function playTone(){
 };
 
 function recordResult(){
+    
+    // 1. record volume for cur obj
     pureTones[curTone].volume = document.querySelector('#volumeRange').value;
+    
+    // 2. calculate and record volume score
+    pureTones[curTone].score = calcScore(pureTones[curTone].volume);
 }
 
 function pauseTone(){
@@ -60,6 +66,12 @@ function removeEventListeners(){
     // 2. Remove for next tone button
     document.querySelector('.stop').removeEventListener('click', nextTone);
 }
+
+// returns either 1, 2 or 3 for vol < 1
+function calcScore(vol){
+    return Math.floor(vol * 2 + 1);
+}
+
 
 function loadPureTones(fileNameArray, side){
     for (i = 0; i < fileNameArray.length; i++){
