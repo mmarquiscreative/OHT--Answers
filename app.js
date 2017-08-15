@@ -1,3 +1,4 @@
+// data
 var testResults ={
     speech: {
         totalRight: -1,
@@ -7,6 +8,7 @@ var testResults ={
     }
 }
 
+// data
 var counters = {
     curRound: 0,
     answerCounter: 0,
@@ -17,6 +19,7 @@ var counters = {
 function nineOptTest(ans){
     function speechTest(){
 
+// data
 var speechQuiz={
     questions: [ans[0], ans[1], ans[2], ans[3], ans[4], ans[5], ans[6], ans[7], ans[8]],
     questionsOrder: [],
@@ -31,6 +34,8 @@ var speechQuiz={
 var backgroundAud;
 backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
         
+        
+// data        
 function loadRandomOrder(){
     
     // Calculate 9 groups of 3 numbers
@@ -61,7 +66,7 @@ function loadRandomOrder(){
     }
 }
 
-
+// data
 // Answer Object Constructor
 function Answer(question, id, parentId, volume){
     this.question = question;
@@ -70,6 +75,7 @@ function Answer(question, id, parentId, volume){
     this.isCorrect = (question === id || question === parentId);
 }
 
+// data        
 // Calculate results of questions, add to results object
 function howWell(){
     var right, wrong, percentageRight, percentageWrong, num;
@@ -104,6 +110,7 @@ function howWell(){
         
 }
 
+// UI
 // 2. Update html to match answers provided as arguments
 function updateAnsHTML(){
     for (i = 0; i < 9; i++){
@@ -118,11 +125,13 @@ function updateAnsHTML(){
     }
 }
 
+// data        
 function addNewAnswer(){
 // 1. add new answer obj
         speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[counters.curRound], event.target.id, event.target.parentNode.id, Math.random()));
 };
-        
+
+// app        
 function logTarget(){// 2. Log target
         console.log(counters.curRound);
         console.log(speechQuiz.questionsOrder[counters.curRound]);
@@ -132,6 +141,7 @@ function logTarget(){// 2. Log target
         counters.curRound++;
 };
 
+// UI        
 function updateRoundProg(){        
     
     // 4. Update Answer Progress
@@ -139,7 +149,8 @@ function updateRoundProg(){
             document.querySelector('#box' + (counters.answerCounter)).classList.add('filled');
         }
 };
-       
+
+// data        
 function loadNextQuestion(){        
     // 3. nextQuestion
         if (counters.answerCounter === 3){
@@ -156,7 +167,8 @@ function loadNextQuestion(){
         }, 600)
         }
 };
-        
+
+// UI        
 // audio pathway string
 function audioString(someNum){
     var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
@@ -175,6 +187,7 @@ function audioString(someNum){
     };
 };
 
+// app        
 // play the 3 audio files
 function playAudio(aud1, aud2, aud3){
     aud1.play();
@@ -186,24 +199,27 @@ function playAudio(aud1, aud2, aud3){
         };
 };    
   
-        
+// app        
 function audioLoop(){
     backgroundAud.play();
     backgroundAud.loop = true;
     backgroundAud.volume = counters.volumeCounter;
 }
-        
+
+// app        
 function pauseAudio(){
     backgroundAud.pause();
 }
 
+// app        
 function updateVolume(){
     if(counters.volumeCounter <= .8){
                 counters.volumeCounter += .2;
                 backgroundAud.volume = counters.volumeCounter;
             }
 }
-        
+ 
+// app        
 function playRoundAudio(){
      console.log('round num is ' + counters.roundNum);    
         var tempNum = counters.curRound;
@@ -225,7 +241,8 @@ function playRoundAudio(){
         // 4. update total question rounds
         counters.roundNum++;
 }
-        
+
+// app        
 function answerInput(){
     
     // 1. Add new answer obj
@@ -240,7 +257,8 @@ function answerInput(){
     // 4. Load next question
     loadNextQuestion();
 }; 
-        
+
+// app        
 function init(){
     // 1. load speech test HTML
     
@@ -253,7 +271,7 @@ function init(){
     audioLoop();
 };
 
-//
+// app
 function askQuestion(){
    
     // Limit number of rounds
