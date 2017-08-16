@@ -24,7 +24,7 @@ var counters = {
 }
     
 var speechQuiz={
-    questions: [ans[0], ans[1], ans[2], ans[3], ans[4], ans[5], ans[6], ans[7], ans[8]],
+    questions: [],
     questionsOrder: [],
     answers: [],
     results: {
@@ -38,6 +38,7 @@ var speechQuiz={
 // FUNCTIONS
 
 // Answer Object Constructor
+
 function Answer(question, id, parentId, volume){
     this.question = question;
     this.id=id;
@@ -73,6 +74,7 @@ function loadRandomOrder(){
         speechQuiz.questionsOrder.push(answer3);
         
     }
+    console.log(speechQuiz.questions);
 };
     
 // Calculate results of questions, add to results object
@@ -113,10 +115,36 @@ function addNewAnswer(){
 // 1. add new answer obj
         speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[counters.curRound], event.target.id, event.target.parentNode.id, Math.random()));
 }; 
+
+function increaseRoundNum(){
+    counters.roundNum++
+    console.log('round updated');
+};
+    function increaseVolumeCounter(num){
+    counters.volumeCounter += num;
+};
+function updateAnswerOptions(newArray){
+    speechQuiz.questions = [];
+    newArray.forEach(function(cur){
+        speechQuiz.questions.push(cur);
+    });
+};
     
+function updateAnswerCounter(num){
+    counters.answerCounter = num;
+}
 // RETURNED PUBLIC FUNCTIONS
   return {
-
+      counters: counters,
+      speechQuiz: speechQuiz,
+      increaseRoundNum: increaseRoundNum,
+      updateAnswerOptions: updateAnswerOptions,
+      increaseVolumeCounter: increaseVolumeCounter,
+      updateAnswerCounter: updateAnswerCounter,
+      loadRandomOrder: loadRandomOrder,
+      addNewAnswer: addNewAnswer,
+      howWell: howWell,
+      addNewAnswer: addNewAnswer
   };
 
 })();
@@ -136,7 +164,7 @@ function addNewAnswer(){
 
 var UIController = (function() {
 
-  var importHTML = document.querySelector('link[id="html-templates"]').import;
+  /* var importHTML = document.querySelector('link[id="html-templates"]').import;
 
   var importElements = {
     stageCalib:       importHTML.querySelector('.stage-calib'),
@@ -146,17 +174,17 @@ var UIController = (function() {
     stageToneTest:    importHTML.querySelector('.stage-tone-test'),
     stageVolume:      importHTML.querySelector('.stage-volume')
   };
+  */
 
-var backgroundAud;
-backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
+var backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
 
     
 // FUNCTIONS
     
  // 2. Update html to match answers provided as arguments
-function updateAnsHTML(){
+function updateAnsHTML(ansArray){
     for (i = 0; i < 9; i++){
-        cur = ans[i];
+        cur = ansArray[i];
         tempNum = i + 1;
         
         // 2.1 Update HTML ids for answer divs
@@ -167,23 +195,26 @@ function updateAnsHTML(){
     }
 };
     
-function updateRoundProg(){        
+function updateRoundProg(ansCounter){        
     
     // 4. Update Answer Progress
-        if (counters.answerCounter < 4){
-            document.querySelector('#box' + (counters.answerCounter)).classList.add('filled');
+        if (ansCounter < 4){
+            document.querySelector('#box' + (ansCounter)).classList.add('filled');
         }
 };
     
 // audio pathway string
-function audioString(someNum){
-    var curAudio1 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
-    someNum++;
+function audioString(someNum, someArray){
+    console.log(someNum);
+    console.log(someArray);
+    var tempNum = someNum;
+    var curAudio1 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
+    tempNum++;
         
-    var curAudio2 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
-    someNum++;
+    var curAudio2 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
+    tempNum++;
         
-    var curAudio3 = 'Audio/Speech_' + speechQuiz.questionsOrder[someNum] + '.mp3';
+    var curAudio3 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
     
     // return audio strings as object
     return {
@@ -197,7 +228,10 @@ function audioString(someNum){
     
 // RETURNED PUBLIC FUNCTIONS
   return {
-
+      audioString: audioString,
+      updateAnsHTML: updateAnsHTML,
+      backgroundAud: backgroundAud,
+      updateRoundProg: updateRoundProg
   };
 
 })();
@@ -219,21 +253,25 @@ var controller = (function(dataCtrl, UICtrl) {
 
 // FUNCTIONS
     
-function logTarget(){// 2. Log target
-        console.log(counters.curRound);
-        console.log(speechQuiz.questionsOrder[counters.curRound]);
+function logTarget(){
+    // 2. Log target
+        console.log('curRound is ' + dataCtrl.counters.curRound);
+       
         console.log(event.target.id);
-        console.log(speechQuiz.answers[counters.curRound].isCorrect);
-        counters.answerCounter++;
-        counters.curRound++;
+        console.log(dataCtrl.speechQuiz.answers[dataCtrl.counters.curRound].isCorrect);
+        var curAnsNum = dataCtrl.counters.answerCounter + 1;
+        dataCtrl.updateAnswerCounter(curAnsNum);
+        
+    
+        console.log(dataCtrl.counters.answerCounter);
 };
     
 function loadNextQuestion(){        
     // 3. nextQuestion
-        if (counters.answerCounter === 3){
+        if (dataCtrl.counters.answerCounter === 3){
         setTimeout(function(){
             askQuestion();
-            counters.answerCounter = 0;
+            dataCtrl.updateAnswerCounter(0);
             
             for (i = 0; i < 3; i++){
                 var tempNode = document.querySelectorAll('.filled');
@@ -258,81 +296,93 @@ function playAudio(aud1, aud2, aud3){
   
 // app        
 function audioLoop(){
-    backgroundAud.play();
-    backgroundAud.loop = true;
-    backgroundAud.volume = counters.volumeCounter;
+    UICtrl.backgroundAud.play();
+    UICtrl.backgroundAud.loop = true;
+    UICtrl.backgroundAud.volume = dataCtrl.counters.volumeCounter;
 }
 
 // app        
 function pauseAudio(){
-    backgroundAud.pause();
+    UICtrl.backgroundAud.pause();
 }
 
 // app        
 function updateVolume(){
-    if(counters.volumeCounter <= .8){
-                counters.volumeCounter += .2;
-                backgroundAud.volume = counters.volumeCounter;
+    if(dataCtrl.counters.volumeCounter <= .8){
+                dataCtrl.increaseVolumeCounter(.2);
+                UICtrl.backgroundAud.volume = dataCtrl.counters.volumeCounter;
             }
 }
  
 // app        
 function playRoundAudio(){
-     console.log('round num is ' + counters.roundNum);    
-        var tempNum = counters.curRound;
+     console.log('curRound is ' + dataCtrl.counters.curNum);    
+        var tempNum = dataCtrl.counters.curRound;
         
         // 1. create audio pathway strings
-        var question = audioString(tempNum);    
+        var question = UICtrl.audioString(tempNum, dataCtrl.speechQuiz.questionsOrder);    
         
         // 2. load path string as new Audio object
         var audio1 = new Audio(question.curAudio1);
-            audio1.volume = (1 - counters.roundNum * .05);
+            // audio1.volume = (1 - dataCtrl.counters.roundNum * .05);
         var audio2 = new Audio(question.curAudio2);
-            audio2.volume = (1 - counters.roundNum * .05);
+            // audio2.volume = (1 - dataCtrl.counters.roundNum * .05);
         var audio3 = new Audio(question.curAudio3);
-            audio3.volume = (1 - counters.roundNum * .05);
+            // audio3.volume = (1 - dataCtrl.counters.roundNum * .05);
    
         // 3. play the 3 audio clips
         playAudio(audio1, audio2, audio3);
-    
+        
         // 4. update total question rounds
-        counters.roundNum++;
+        dataCtrl.increaseRoundNum();
 }
 
 // app        
 function answerInput(){
     
     // 1. Add new answer obj
-    addNewAnswer();
+    dataCtrl.addNewAnswer();
     
     // 2. Log Target
     logTarget();
     
     // 3. update progress meter
-    updateRoundProg();
+    UICtrl.updateRoundProg(dataCtrl.counters.answerCounter);
     
     // 4. Load next question
     loadNextQuestion();
 }; 
 
 // app        
-function init(){
+function speechInit(ansArray){
     // 1. load speech test HTML
-    
+    console.log('init run');
+    dataCtrl.updateAnswerOptions(ansArray);
+    console.log(ansArray);
+    console.log(dataCtrl.speechQuiz.answers);
     // 2. Update html to match answers provided as arguments
-   updateAnsHTML();
+   UICtrl.updateAnsHTML(dataCtrl.speechQuiz.questions);
    
     // 2. add event listeners
     document.querySelector('.container-fluid').addEventListener('click', answerInput);
     
     audioLoop();
+    
+    // 4. Load Random Order
+    dataCtrl.loadRandomOrder();
+    
+    // 5. ask question
+    document.querySelector('#toneAnswer').addEventListener('click', askQuestion);
 };
 
 // app
 function askQuestion(){
-   
+    dataCtrl.increaseRoundNum();
+   console.log('askquestion');
+    console.log('answerCounter ' + dataCtrl.counters.answerCounter);
+    console.log('roundNum ' + dataCtrl.counters.roundNum);
     // Limit number of rounds
-    if (counters.roundNum < 4){
+    if (dataCtrl.counters.roundNum < 4){
        playRoundAudio();
         updateVolume();
     } else {
@@ -343,7 +393,7 @@ function askQuestion(){
     
 // RETURNED PUBLIC FUNCTIONS
   return {
-
+      speechInit: speechInit
   };
 
 })(dataController, UIController);
@@ -352,18 +402,17 @@ function askQuestion(){
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // MAKE IT GO
-controller.init();
-
-loadRandomOrder();
-init();
-askQuestion();
-};
 
 
-document.querySelector('#toneAnswer').addEventListener('click', speechTest);
 
-};
+
+
 var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'];
 
 var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-nineOptTest(num);
+
+controller.speechInit(num);
+
+
+
+

@@ -150,7 +150,7 @@ function updateRoundProg(){
         }
 };
 
-// data        
+// app        
 function loadNextQuestion(){        
     // 3. nextQuestion
         if (counters.answerCounter === 3){
