@@ -3,10 +3,10 @@
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 
-var dataController = (function() {
+var dataController = (function () {
 
 //// VARIABLES ////
-var testResults, counters, speechQuiz;
+    var testResults, counters, speechQuiz;
     
 // Answer results object    
 testResults = {
@@ -26,7 +26,11 @@ counters = {
     volumeCounter: 0
 };
     
-speechQuiz={
+speechQuiz = {
+    quizType: {
+        speech: ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'],
+        num: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    },
     questions: [],
     questionsOrder: [],
     answers: [],
@@ -42,7 +46,7 @@ speechQuiz={
 
 // Answer Object Constructor
 
-function Answer(question, id, parentId, volume){
+function Answer(question, id, parentId, volume) {
     this.question = question;
     this.id = id;
     this.parentId = parentId;
@@ -50,7 +54,7 @@ function Answer(question, id, parentId, volume){
     this.isCorrect = (question === id || question === parentId);
 };    
 
-function loadRandomOrder(){
+function loadRandomOrder() {
     
     // Calculate 9 groups of 3 numbers
     for (i = 0; i < 9; i++){
@@ -457,7 +461,8 @@ function askQuestion(){
 //// RETURNED PUBLIC FUNCTIONS ////
 return {
       speechInit: speechInit,
-      dataCtrl: dataCtrl
+      dataCtrl: dataCtrl,
+    quizType: dataCtrl.speechQuiz.quizType
   };
 
 })(dataController, UIController);
@@ -471,11 +476,8 @@ return {
 
 
 
-var speech = ['bells', 'cat', 'king', 'hand', 'cars', 'tree', 'dog', 'book', 'chair'];
 
-var num = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-
-controller.speechInit(num);
+controller.speechInit(controller.dataCtrl.speechQuiz.quizType.speech);
 
 
 

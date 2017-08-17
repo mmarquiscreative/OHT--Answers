@@ -1,0 +1,315 @@
+<html lang="en">
+
+  <head>
+    <meta charset = "UTF-8">
+    <title>AGX Online Hearing Test HTML Resources</title>
+  </head>
+
+
+  <body>
+
+
+    <!------------------------------------------->
+    <!-- STAGES -->
+    <!------------------------------------------->
+
+    <!-- INTRO -->
+
+    <div class="stage-intro">
+      <div class="header">
+        <img class="agx-hearing-logo logo-intro" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+        <h1 class="header-text">AGX<sup>&reg;</sup> Online Hearing Test</h1>
+      </div>
+
+      <div class="intro-body">
+        <p class="lead-text">Some intro text for the quizzy quiz</p>
+        <button class="btn-submit-intro">Take the Test</button>
+      </div>
+    </div>
+
+
+    <!-- QUIZ -->
+
+    <div class="stage-quiz">
+      <div class="header">
+
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="step-1">Quiz</div>
+          <div class="step-2">Sound Callibration</div>
+          <div class="step-3">Tone Test</div>
+          <div class="step-4">Speech Test</div>
+        </div>
+
+        <div class="prog-bar">
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+        </div>
+      </div>
+
+      <div class="quiz-body">
+        <p class="quiz-question-text"></p>
+
+        <div class="btns-yn">
+          <button class="btn-yn-yes">Yes</button>
+          <button class="btn-yn-no">No</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- GLOBAL VOLUME SET -->
+
+    <div class="stage-volume">
+      <div class="header">
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="step-1">Quiz</div>
+          <div class="step-2">Sound Callibration</div>
+          <div class="step-3">Tone Test</div>
+          <div class="step-4">Speech Test</div>
+        </div>
+
+        <div class="prog-bar">
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+        </div>
+      </div>
+
+      <div class="volume-body">
+        <p class="lead-text">Adjust the volume on your computer so the noise plays at a comfortable level.</p>
+        <p class="lead-text">Please do not adjust your computer volume after this step.</p>
+        <button class="btn-submit-volume">Set Volume</button>
+
+        <div class="vol-tones">
+          <audio id="noise" loop="true" src="../sounds/noise.wav"></audio>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SOUND CALIBRATION -->
+
+    <div class="stage-calib">
+      <div class="header">
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="step-1">Quiz</div>
+          <div class="step-2">Sound Callibration</div>
+          <div class="step-3">Tone Test</div>
+          <div class="step-4">Speech Test</div>
+        </div>
+
+        <div class="prog-bar">
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+        </div>
+      </div>
+
+      <div class="calib-body">
+        <p class="lead-text">Adjust the volume using the <span class="vol-text">+</span> and <span class="vol-text">&ndash;</span> buttons until you can barely hear the tone.</p>
+
+        <div class="calib-ui">
+          <div class="calib-side-l">
+            <div class="calib-tone-l-high active-calib-tone">High</div>
+            <div class="calib-label-l active-calib-label">Left</div>
+            <div class="calib-tone-l-low">Low</div>
+          </div>
+
+          <div class="calib-vol">
+            <div class="icon-speaker">
+              <div class="icon-speaker-base">
+                <div class="icon-speaker-rect"></div>
+                <div class="icon-speaker-cone"></div>
+              </div>
+              <div class="icon-speaker-waves">
+                <div class="icon-speaker-wave-1"></div>
+                <div class="icon-speaker-wave-2"></div>
+                <div class="icon-speaker-wave-3"></div>
+              </div>
+            </div>
+
+            <div class="vol-icons">
+              <button class="vol-plus">+</button>
+              <button class="vol-minus">&ndash;</button>
+            </div>
+          </div>
+
+          <div class="calib-side-r">
+            <div class="calib-tone-r-high">High</div>
+            <div class="calib-label-r">Right</div>
+            <div class="calib-tone-r-low">Low</div>
+          </div>
+        </div>
+
+        <button class="btn-submit-calib">Set Volume</button>
+
+        <div class="calib-tones">
+          <audio id="audio-calib-l-high" loop="true" src="../sounds/5000-L.wav"></audio>
+          <audio id="audio-calib-l-low" loop="true" src="../sounds/100-L.wav"></audio>
+          <audio id="audio-calib-r-high" loop="true" src="../sounds/5000-R.wav"></audio>
+          <audio id="audio-calib-r-low" loop="true" src="../sounds/100-R.wav"></audio>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TONE TEST -->
+
+    <div class="stage-tone-test">
+      <div class="header">
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="step-1">Quiz</div>
+          <div class="step-2">Sound Callibration</div>
+          <div class="step-3">Tone Test</div>
+          <div class="step-4">Speech Test</div>
+        </div>
+
+        <div class="prog-bar">
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+        </div>
+      </div>
+
+      <div class="tone-test-body">
+        <p class="lead-text">Do you hear the tone playing?</p>
+
+        <div class="tone-test-frequencies">
+          <p class="freq-14000hz active-freq">14000Hz</p>
+          <p class="freq-14500hz">14500Hz</p>
+          <p class="freq-14800hz">14800Hz</p>
+          <p class="freq-15000hz">15000Hz</p>
+          <p class="freq-16000hz">16000Hz</p>
+        </div>
+
+        <div class="btns-yn">
+          <button class="btn-yn-yes">Yes</button>
+          <button class="btn-yn-no">No</button>
+        </div>
+
+        <div class="tone-test-tones">
+          <audio id="14000hz" src="../sounds/14000.wav"></audio>
+          <audio id="14500hz" src="../sounds/14500.wav"></audio>
+          <audio id="14800hz" src="../sounds/14800.wav"></audio>
+          <audio id="15000hz" src="../sounds/15000.wav"></audio>
+          <audio id="16000hz" src="../sounds/16000.wav"></audio>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SPEECH TEST -->
+
+    <div class="stage-speech-test">
+      <div class="header">
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="step-1">Quiz</div>
+          <div class="step-2">Sound Callibration</div>
+          <div class="step-3">Tone Test</div>
+          <div class="step-4">Speech Test</div>
+        </div>
+
+        <div class="prog-bar">
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+          <div class="prog-bubble"></div>
+        </div>
+      </div>
+
+      <div class="speech-test-body">
+        <p class="lead-text">Speech test, bruv</p>
+
+        <div class="speech-test-tones">
+         
+         <div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><p id="toneAnswer">Start Test</p></div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
+    </div>
+         
+        <div class='row'>
+   <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" ></div>
+    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" id="box1"></div>
+    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" id="box2"></div>
+   <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1"></div>
+    <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" id="box3"></div>
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" ></div>
+        
+    </div>
+          
+        </div>
+      </div>
+    </div>
+
+
+    <!-- RESULTS -->
+
+    <div class="stage-results">
+      <div class="header">
+        <img class="agx-hearing-logo logo-stages" src="./img/AGX-Hearing-Logo-Horizontal.png" />
+
+        <div class="steps">
+          <div class="active-step">Results</div>
+        </div>
+      </div>
+
+      <div class="results-body">
+        <p class="lead-text">Your AGX<sup>&reg;</sup> Online Hearing Test Results</p>
+      </div>
+    </div>
+
+
+
+    <!------------------------------------------->
+    <!-- PROGRESS CIRCLES -->
+    <!------------------------------------------->
+
+    <div class="prog-bar-6">
+      <div class="prog-bubble"></div>
+      <div class="prog-bubble"></div>
+      <div class="prog-bubble"></div>
+      <div class="prog-bubble"></div>
+      <div class="prog-bubble"></div>
+      <div class="prog-bubble"></div>
+    </div>
+
+
+    <!------------------------------------------->
+    <!-- BUTTONS -->
+    <!------------------------------------------->
+
+    <button class="btn-submit"></button>
+
+    <div class="btns-yn">
+      <button class="btn-yn-yes">Yes</button>
+      <button class="btn-yn-no">No</button>
+    </div>
+
+
+  <body>
+
+</html>
