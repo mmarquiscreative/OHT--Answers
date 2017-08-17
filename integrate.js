@@ -3,27 +3,30 @@
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 
-// VARIABLES
-
 var dataController = (function() {
+
+//// VARIABLES ////
+var testResults, counters, speechQuiz;
     
-    var testResults ={
+// Answer results object    
+testResults = {
     speech: {
         totalRight: -1,
         totalWrong: -1,
         percentRight: -1,
         percentWrong: -1
     }
-}
+};
 
-var counters = {
+// Various Counter Obj    
+counters = {
     curRound: 0,
+    totalAnswerCount: 0,
     answerCounter: 0,
-    roundNum: 0,
     volumeCounter: 0
-}
+};
     
-var speechQuiz={
+speechQuiz={
     questions: [],
     questionsOrder: [],
     answers: [],
@@ -35,14 +38,15 @@ var speechQuiz={
     }
 };
     
-// FUNCTIONS
+//// FUNCTIONS ////
 
 // Answer Object Constructor
 
 function Answer(question, id, parentId, volume){
     this.question = question;
-    this.id=id;
-    this.volume=volume;
+    this.id = id;
+    this.parentId = parentId;
+    this.volume = volume;
     this.isCorrect = (question === id || question === parentId);
 };    
 
@@ -52,28 +56,29 @@ function loadRandomOrder(){
     for (i = 0; i < 9; i++){
         var num1, num2, num3, answer1, answer2, answer3;
         
-        // 1. Calculate number in group of 3
+        // 1. Calculate numbers in groups of 3
         num1 = Math.round(Math.random()*8);
         num2 = Math.round(Math.random()*8);
         num3 = Math.round(Math.random()*8);
         
-        // 2. prevent duplicates in groups
+        // 2. Prevent duplicates in groups
         while (num1 === num2 || num2 === num3 || num1 === num3){
             num2 = Math.round(Math.random()*8);
             num3 = Math.round(Math.random()*8);
-        }
+        };
         
-        // 3. update which answers match numbers generated
+        // 3. Save answers which correlate to the numbers generated
         answer1 = speechQuiz.questions[num1];
         answer2 = speechQuiz.questions[num2];
         answer3 = speechQuiz.questions[num3];
         
-        // 4. add three new answers to end of order array
+        // 4. Add three new answer strings to end of order array
         speechQuiz.questionsOrder.push(answer1);
         speechQuiz.questionsOrder.push(answer2);
         speechQuiz.questionsOrder.push(answer3);
         
-    }
+    };
+    
     console.log(speechQuiz.questions);
 };
     
@@ -108,43 +113,66 @@ function howWell(){
     testResults.speech.totalWrong = wrong;
     testResults.speech.percentRight = percentageRight;
     testResults.speech.percentWrong = percentageWrong;
-        
+    
+    // 5. Console log results
+    console.log('Total right: ' + right);
+    console.log('Total wrong: ' + wrong);
+    console.log('Percent right: ' + percentageRight);
+    console.log('Percent wrong: ' + percentageWrong);
+    
 };
 
-function addNewAnswer(){
-// 1. add new answer obj
-        speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[counters.curRound], event.target.id, event.target.parentNode.id, Math.random()));
+// Create and add new answer object to the end of answers array    
+function addNewAnswer(ansNum){
+    
+    // 1. Create and push new answer obj
+    speechQuiz.answers.push(new Answer(speechQuiz.questionsOrder[counters.totalAnswerCount], event.target.id, event.target.parentNode.id, Math.random()));
+    
 }; 
 
-function increaseRoundNum(){
-    counters.roundNum++
-    console.log('round updated');
-};
-    function increaseVolumeCounter(num){
-    counters.volumeCounter += num;
-};
+// Load 9 new answers for speech test
 function updateAnswerOptions(newArray){
+    
+    // 1. Clear out any remaining answers
     speechQuiz.questions = [];
+    
+    // 2. Load new array into questions array
     newArray.forEach(function(cur){
         speechQuiz.questions.push(cur);
     });
 };
     
+//// Adjusting Counters Functions ////
+    
+// curRound    
+function increaseCurRound(){
+    counters.curRound++
+    console.log('round updated');
+};
+
+// volumeCounter
+function increaseVolumeCounter(num){
+    counters.volumeCounter += num;
+};
+    
+// answerCounter    
 function updateAnswerCounter(num){
     counters.answerCounter = num;
 }
-// RETURNED PUBLIC FUNCTIONS
+    
+//// RETURNED PUBLIC FUNCTIONS ////
   return {
       counters: counters,
       speechQuiz: speechQuiz,
-      increaseRoundNum: increaseRoundNum,
+      increaseCurRound: increaseCurRound,
       updateAnswerOptions: updateAnswerOptions,
       increaseVolumeCounter: increaseVolumeCounter,
       updateAnswerCounter: updateAnswerCounter,
       loadRandomOrder: loadRandomOrder,
       addNewAnswer: addNewAnswer,
       howWell: howWell,
-      addNewAnswer: addNewAnswer
+      addNewAnswer: addNewAnswer,
+      testResults: testResults
   };
 
 })();
@@ -158,9 +186,6 @@ function updateAnswerCounter(num){
 // UI CONTROLLER
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
-
-
-// VARIABLES
 
 var UIController = (function() {
 
@@ -176,45 +201,58 @@ var UIController = (function() {
   };
   */
 
+//// VARIABLES ////
+
+// Speech noise in background    
 var backgroundAud = new Audio('Audio/BackgroundNoise.mp3');
 
     
-// FUNCTIONS
+//// FUNCTIONS ////
     
- // 2. Update html to match answers provided as arguments
+// Update html to match answers provided as arguments
 function updateAnsHTML(ansArray){
+    
     for (i = 0; i < 9; i++){
+        
+        // 1. Load string into cur variable
         cur = ansArray[i];
+        
+        // 2. Temp number for non-zero based elements
         tempNum = i + 1;
         
-        // 2.1 Update HTML ids for answer divs
+        // 3. Update HTML ids for answer divs
         document.querySelector('#ans' + tempNum).id = cur;
         
-        // 2.2 Add answer text inside answer divs
+        // 4. Add answer text inside answer divs
         document.querySelector('#' + cur).innerHTML = '<p>' + cur + '</p>';
-    }
+    };
 };
     
+// Update Progress Bubbles
 function updateRoundProg(ansCounter){        
     
-    // 4. Update Answer Progress
-        if (ansCounter < 4){
-            document.querySelector('#box' + (ansCounter)).classList.add('filled');
-        }
+    if (ansCounter < 4){
+        
+        // Add filled class to next bubble
+        document.querySelector('#box' + (ansCounter)).classList.add('filled');
+    };
 };
     
-// audio pathway string
+// Create next round's audio file name string
 function audioString(someNum, someArray){
-    console.log(someNum);
-    console.log(someArray);
-    var tempNum = someNum;
-    var curAudio1 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
+    var tempNum, curAudio1, curAudio2, curAudio3;
+    
+    // Multiply current round by 3 to target correct answers
+    tempNum = someNum * 3;
+    
+    // Create 3 Audio strings
+    curAudio1 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
     tempNum++;
-        
-    var curAudio2 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
+    
+    curAudio2 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
     tempNum++;
-        
-    var curAudio3 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
+  
+    curAudio3 = 'Audio/Speech_' + someArray[tempNum] + '.mp3';
     
     // return audio strings as object
     return {
@@ -223,10 +261,9 @@ function audioString(someNum, someArray){
         curAudio3: curAudio3
     };
 };
-    
 
     
-// RETURNED PUBLIC FUNCTIONS
+//// RETURNED PUBLIC FUNCTIONS ////
   return {
       audioString: audioString,
       updateAnsHTML: updateAnsHTML,
@@ -247,153 +284,180 @@ function audioString(someNum, someArray){
 
 var controller = (function(dataCtrl, UICtrl) {
 
-// VARIABLES
+//// VARIABLES ////
 
     
 
-// FUNCTIONS
+//// FUNCTIONS ////
     
+// Log if answer is right, update answerCounter
 function logTarget(){
-    // 2. Log target
-        console.log('curRound is ' + dataCtrl.counters.curRound);
-       
-        console.log(event.target.id);
-        console.log(dataCtrl.speechQuiz.answers[dataCtrl.counters.curRound].isCorrect);
-        var curAnsNum = dataCtrl.counters.answerCounter + 1;
-        dataCtrl.updateAnswerCounter(curAnsNum);
-        
+    var curAnsNum;
     
-        console.log(dataCtrl.counters.answerCounter);
+   // 1. Console log true or false 
+    console.log(dataCtrl.speechQuiz.answers[(dataCtrl.speechQuiz.answers.length - 1)].isCorrect);
+    
+    // 2. Add one to answerCounter
+    curAnsNum = dataCtrl.counters.answerCounter + 1;
+    dataCtrl.updateAnswerCounter(curAnsNum);
 };
     
+// Load and play next round
 function loadNextQuestion(){        
-    // 3. nextQuestion
-        if (dataCtrl.counters.answerCounter === 3){
+    
+    if (dataCtrl.counters.answerCounter === 3){
+        
+        // Delay loading next questions
         setTimeout(function(){
+            
+            // 1. Play new audio
             askQuestion();
+            
+            // 2. Reset answer counter to 0
             dataCtrl.updateAnswerCounter(0);
             
+            // 3. Reset Progress bubbles
             for (i = 0; i < 3; i++){
+                
+                // Load bubble elements as nodelist
                 var tempNode = document.querySelectorAll('.filled');
+                
+                // For each node, remove class
                 tempNode.forEach(function(cur){
                     cur.classList.remove('filled');
-                })
-            }
-        }, 600)
-        }
+                });
+            };
+        }, 600);
+    };
 };
     
-// play the 3 audio files
+// Play the 3 audio files
 function playAudio(aud1, aud2, aud3){
+    
+    // 1. Play first
     aud1.play();
+    
+    // 2. After finished, start second
     aud1.onended = function(){
         aud2.play();
-        };
+    };
+    
+    // 3. After finished, start third
     aud2.onended = function(){
         aud3.play();
-        };
+    };
 };    
   
 // app        
 function audioLoop(){
+    
+    // 1. Play audio
     UICtrl.backgroundAud.play();
+    
+    // 2. Loop the Audio
     UICtrl.backgroundAud.loop = true;
+    
+    // 3. Set audio volume
     UICtrl.backgroundAud.volume = dataCtrl.counters.volumeCounter;
-}
+};
 
 // app        
 function pauseAudio(){
     UICtrl.backgroundAud.pause();
-}
+};
 
 // app        
 function updateVolume(){
+    
     if(dataCtrl.counters.volumeCounter <= .8){
-                dataCtrl.increaseVolumeCounter(.2);
-                UICtrl.backgroundAud.volume = dataCtrl.counters.volumeCounter;
-            }
-}
+        
+        // 1. Increase volume counter by .2
+        dataCtrl.increaseVolumeCounter(.2);
+        
+        // 2. Update audio with new volume level
+        UICtrl.backgroundAud.volume = dataCtrl.counters.volumeCounter;
+    };
+};
  
 // app        
-function playRoundAudio(){
-     console.log('curRound is ' + dataCtrl.counters.curNum);    
-        var tempNum = dataCtrl.counters.curRound;
+function playRoundAudio(){  
+    var tempNum, question, audio1, audio2, audio3;
+    
+    // 1. Pull current round as temp number
+    tempNum = dataCtrl.counters.curRound;
         
-        // 1. create audio pathway strings
-        var question = UICtrl.audioString(tempNum, dataCtrl.speechQuiz.questionsOrder);    
+    // 2. Returns three audio file pathway strings matching current round
+    question = UICtrl.audioString(tempNum, dataCtrl.speechQuiz.questionsOrder);    
         
-        // 2. load path string as new Audio object
-        var audio1 = new Audio(question.curAudio1);
-            // audio1.volume = (1 - dataCtrl.counters.roundNum * .05);
-        var audio2 = new Audio(question.curAudio2);
-            // audio2.volume = (1 - dataCtrl.counters.roundNum * .05);
-        var audio3 = new Audio(question.curAudio3);
-            // audio3.volume = (1 - dataCtrl.counters.roundNum * .05);
-   
-        // 3. play the 3 audio clips
-        playAudio(audio1, audio2, audio3);
-        
-        // 4. update total question rounds
-        dataCtrl.increaseRoundNum();
-}
+    // 3. create three new Audio elements from returned strings
+    audio1 = new Audio(question.curAudio1);
+    audio2 = new Audio(question.curAudio2);
+    audio3 = new Audio(question.curAudio3);
+    
+    // 4. Play the 3 audio clips
+    playAudio(audio1, audio2, audio3);
+    
+    /* !!! volControl code for lowering audio each time: audio3.volume = (1 - dataCtrl.counters.curRound * .05);*/
+};
 
 // app        
 function answerInput(){
     
-    // 1. Add new answer obj
+    // 1. Create and add new answer obj
     dataCtrl.addNewAnswer();
     
-    // 2. Log Target
+    // 2. Console log if true/false and update totalAnswerCount
     logTarget();
     
-    // 3. update progress meter
+    // 3. Update progress bubbles
     UICtrl.updateRoundProg(dataCtrl.counters.answerCounter);
     
-    // 4. Load next question
+    // 4. Load next question and play audio
     loadNextQuestion();
 }; 
 
 // app        
 function speechInit(ansArray){
-    // 1. load speech test HTML
-    console.log('init run');
+    
+    // 1. Load speech test HTML
     dataCtrl.updateAnswerOptions(ansArray);
-    console.log(ansArray);
     console.log(dataCtrl.speechQuiz.answers);
+    
     // 2. Update html to match answers provided as arguments
-   UICtrl.updateAnsHTML(dataCtrl.speechQuiz.questions);
-   
-    // 2. add event listeners
-    document.querySelector('.container-fluid').addEventListener('click', answerInput);
+    UICtrl.updateAnsHTML(dataCtrl.speechQuiz.questions);
     
-    audioLoop();
-    
-    // 4. Load Random Order
+    // 3. Load Random Order
     dataCtrl.loadRandomOrder();
-    
-    // 5. ask question
+
+    // 4. Add event listeners
+    document.querySelector('.container-fluid').addEventListener('click', answerInput);
     document.querySelector('#toneAnswer').addEventListener('click', askQuestion);
 };
 
 // app
 function askQuestion(){
-    dataCtrl.increaseRoundNum();
-   console.log('askquestion');
-    console.log('answerCounter ' + dataCtrl.counters.answerCounter);
-    console.log('roundNum ' + dataCtrl.counters.roundNum);
+    
     // Limit number of rounds
-    if (dataCtrl.counters.roundNum < 4){
-       playRoundAudio();
+    if (dataCtrl.counters.curRound < 4){
+        
+        // 1. Play audio
+        playRoundAudio();
+        
+        // 2. Update background noise volume
         updateVolume();
+        
     } else {
         pauseAudio();
     };
-
+    
+    // Update curRound counter
+    dataCtrl.increaseCurRound();
 };
     
-// RETURNED PUBLIC FUNCTIONS
-  return {
-      speechInit: speechInit
+//// RETURNED PUBLIC FUNCTIONS ////
+return {
+      speechInit: speechInit,
+      dataCtrl: dataCtrl
   };
 
 })(dataController, UIController);
